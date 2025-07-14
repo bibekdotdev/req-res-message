@@ -134,7 +134,7 @@ export const ToastProvider = ({ children }) => {
           position: "fixed",
           top: 20,
           right: 20,
-          left: 20, // 👈 Allow margin on small screens
+          left: 20,
           zIndex: 9999,
           display: "flex",
           flexDirection: "column",
@@ -190,15 +190,13 @@ export const ToastProvider = ({ children }) => {
                 textShadow: "0 0 3px rgba(0,0,0,0.4)",
                 willChange: "transform",
 
-                maxWidth: "100%",
                 width: "100%",
+                maxWidth: 360,
                 boxSizing: "border-box",
               }}
             >
-              {/* Message */}
               <span style={{ flex: 1, marginRight: 8 }}>{message}</span>
 
-              {/* Close button */}
               <button
                 onClick={() => removeToast(id)}
                 aria-label="Close notification"
@@ -221,7 +219,6 @@ export const ToastProvider = ({ children }) => {
                 ×
               </button>
 
-              {/* Countdown bar */}
               <div
                 style={{
                   position: "absolute",
