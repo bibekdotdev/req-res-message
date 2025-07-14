@@ -1,0 +1,21 @@
+{
+  "name": "req-res-message",
+  "version": "1.0.1",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^4.0.0",
+    "@vitejs/plugin-react": "^4.0.0"
+  },
+  "scripts": {
+    "build": "vite build"
+  },
+  "license": "MIT"
+}
