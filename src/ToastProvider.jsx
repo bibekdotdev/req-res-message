@@ -142,9 +142,9 @@ export const ToastProvider = ({ children }) => {
         aria-live="assertive"
         sx={{
           position: "fixed",
-          top: 20,
-          left: 20,
-          right: 20,
+          top: isSmallScreen ? 10 : 20,
+          right: isSmallScreen ? 1 : 20,
+          left: 1,
           zIndex: 1400,
           display: "flex",
           flexDirection: "column",
