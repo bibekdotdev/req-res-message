@@ -191,7 +191,7 @@ export const ToastProvider = ({ children }) => {
                 willChange: "transform",
 
                 width: "100%",
-                maxWidth: 360,
+                maxWidth: 280,
                 boxSizing: "border-box",
               }}
             >
