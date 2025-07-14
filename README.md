@@ -1,9 +1,30 @@
+- ✨ Description
+- 📦 Installation
+- ⚙️ Usage with and without custom color/background
+- 📋 API
+- ✅ Examples
+- 🏷️ Badges (optional)
+
+---
+
+### ✅ `README.md` for `req-res-message`
+
+````md
+# req-res-message
+
+A lightweight, easy-to-use React toast message utility to display **success** and **error** messages. It supports default styling, and you can also provide **custom color** and **background color** for more control.
+
+![npm](https://img.shields.io/npm/v/req-res-message)
+![downloads](https://img.shields.io/npm/dw/req-res-message)
+![license](https://img.shields.io/npm/l/req-res-message)
+
+---
+
 ## 📦 Installation
 
 ```bash
 npm install req-res-message
 ```
-
 ````
 
 ---
@@ -112,4 +133,3 @@ This project is licensed under the MIT License.
 
 
 ```
-````
