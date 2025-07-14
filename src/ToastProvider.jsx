@@ -7,13 +7,6 @@ const TOAST_DURATION = 3000; // Toast display time in ms
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
-  /**
-   * showToast supports:
-   * @param {string} message - Toast message
-   * @param {string} type - "success" or "error"
-   * @param {string|null} backgroundColor - optional background color/gradient CSS string
-   * @param {string|null} textColor - optional text color CSS string
-   */
   const showToast = (
     message,
     type,
@@ -64,7 +57,6 @@ export const ToastProvider = ({ children }) => {
   const showError = (message, backgroundColor = null, textColor = null) =>
     showToast(message, "error", backgroundColor, textColor);
 
-  // Auto-dismiss countdown
   useEffect(() => {
     if (toasts.length === 0) return;
 
@@ -88,7 +80,6 @@ export const ToastProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [toasts]);
 
-  // Clean up after animation
   useEffect(() => {
     toasts.forEach((toast) => {
       if (!toast.visible && toast.remaining !== TOAST_DURATION) {
@@ -99,7 +90,6 @@ export const ToastProvider = ({ children }) => {
     });
   }, [toasts]);
 
-  // Pause countdown on hover
   const pauseToast = (id) => {
     setToasts((prev) =>
       prev.map((toast) =>
@@ -114,7 +104,6 @@ export const ToastProvider = ({ children }) => {
     );
   };
 
-  // Resume countdown on mouse leave
   const resumeToast = (id) => {
     setToasts((prev) =>
       prev.map((toast) =>
@@ -125,7 +114,6 @@ export const ToastProvider = ({ children }) => {
     );
   };
 
-  // Default colors based on type
   const defaultBackground = {
     success: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
     error: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
@@ -146,11 +134,11 @@ export const ToastProvider = ({ children }) => {
           position: "fixed",
           top: 20,
           right: 20,
+          left: 20, // 👈 Allow margin on small screens
           zIndex: 9999,
           display: "flex",
           flexDirection: "column",
           gap: 12,
-          maxWidth: 360,
           pointerEvents: "none",
         }}
       >
@@ -193,7 +181,6 @@ export const ToastProvider = ({ children }) => {
                   "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                 position: "relative",
                 overflow: "hidden",
-                minWidth: 280,
 
                 display: "flex",
                 alignItems: "center",
@@ -201,8 +188,11 @@ export const ToastProvider = ({ children }) => {
                 gap: 12,
 
                 textShadow: "0 0 3px rgba(0,0,0,0.4)",
-
                 willChange: "transform",
+
+                maxWidth: "100%",
+                width: "100%",
+                boxSizing: "border-box",
               }}
             >
               {/* Message */}
