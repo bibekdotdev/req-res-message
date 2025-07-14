@@ -134,12 +134,12 @@ export const ToastProvider = ({ children }) => {
           position: "fixed",
           top: 20,
           right: 20,
-          left: 20,
           zIndex: 9999,
           display: "flex",
           flexDirection: "column",
           gap: 12,
           pointerEvents: "none",
+          alignItems: "flex-end",
         }}
       >
         {toasts.map(
@@ -193,6 +193,9 @@ export const ToastProvider = ({ children }) => {
                 width: "100%",
                 maxWidth: 280,
                 boxSizing: "border-box",
+                wordWrap: "break-word",
+                whiteSpace: "normal",
+                flexWrap: "wrap",
               }}
             >
               <span style={{ flex: 1, marginRight: 8 }}>{message}</span>
