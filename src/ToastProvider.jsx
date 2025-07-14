@@ -7,6 +7,13 @@ const TOAST_DURATION = 3000; // Toast display time in ms
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
+  /**
+   * showToast supports:
+   * @param {string} message - Toast message
+   * @param {string} type - "success" or "error"
+   * @param {string|null} backgroundColor - optional background color/gradient CSS string
+   * @param {string|null} textColor - optional text color CSS string
+   */
   const showToast = (
     message,
     type,
@@ -57,6 +64,7 @@ export const ToastProvider = ({ children }) => {
   const showError = (message, backgroundColor = null, textColor = null) =>
     showToast(message, "error", backgroundColor, textColor);
 
+  // Auto-dismiss countdown
   useEffect(() => {
     if (toasts.length === 0) return;
 
@@ -80,6 +88,7 @@ export const ToastProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [toasts]);
 
+  // Clean up after animation
   useEffect(() => {
     toasts.forEach((toast) => {
       if (!toast.visible && toast.remaining !== TOAST_DURATION) {
@@ -90,6 +99,7 @@ export const ToastProvider = ({ children }) => {
     });
   }, [toasts]);
 
+  // Pause countdown on hover
   const pauseToast = (id) => {
     setToasts((prev) =>
       prev.map((toast) =>
@@ -104,6 +114,7 @@ export const ToastProvider = ({ children }) => {
     );
   };
 
+  // Resume countdown on mouse leave
   const resumeToast = (id) => {
     setToasts((prev) =>
       prev.map((toast) =>
@@ -114,6 +125,7 @@ export const ToastProvider = ({ children }) => {
     );
   };
 
+  // Default colors based on type
   const defaultBackground = {
     success: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
     error: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
@@ -132,16 +144,14 @@ export const ToastProvider = ({ children }) => {
         aria-live="assertive"
         style={{
           position: "fixed",
-          top: 16,
-          right: 16,
-          left: 16,
+          top: 20,
+          right: 20,
           zIndex: 9999,
           display: "flex",
           flexDirection: "column",
           gap: 12,
+          maxWidth: 360,
           pointerEvents: "none",
-          maxWidth: "100%",
-          alignItems: "flex-end",
         }}
       >
         {toasts.map(
@@ -174,26 +184,31 @@ export const ToastProvider = ({ children }) => {
                 fontSize: 14,
                 userSelect: "none",
                 cursor: "default",
+
                 opacity: visible ? 1 : 0,
                 transform: visible
-                  ? "translateY(0) scale(1)"
-                  : "translateY(-20px) scale(0.95)",
-                transition: "opacity 0.3s ease, transform 0.3s ease",
+                  ? "translateX(0) scale(1)"
+                  : "translateX(100%) scale(0.95)",
+                transition:
+                  "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                 position: "relative",
                 overflow: "hidden",
-                width: "100%",
-                maxWidth: 360,
+                minWidth: 280,
 
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 gap: 12,
+
                 textShadow: "0 0 3px rgba(0,0,0,0.4)",
+
                 willChange: "transform",
               }}
             >
+              {/* Message */}
               <span style={{ flex: 1, marginRight: 8 }}>{message}</span>
 
+              {/* Close button */}
               <button
                 onClick={() => removeToast(id)}
                 aria-label="Close notification"
@@ -216,6 +231,7 @@ export const ToastProvider = ({ children }) => {
                 ×
               </button>
 
+              {/* Countdown bar */}
               <div
                 style={{
                   position: "absolute",
