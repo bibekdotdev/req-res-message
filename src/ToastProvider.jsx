@@ -192,7 +192,7 @@ export const ToastProvider = ({ children }) => {
                 display: "flex",
                 flexDirection: "column",
                 width: "100%",
-                maxWidth: 320,
+                maxWidth: 420,
                 boxSizing: "border-box",
               }}
             >
