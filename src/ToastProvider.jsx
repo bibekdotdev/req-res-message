@@ -1,13 +1,20 @@
 import React, { createContext, useState, useEffect } from "react";
-import { Box, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  useMediaQuery,
+  IconButton,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ToastContext = createContext();
-
-const TOAST_DURATION = 3000; // Toast display time in ms
+const TOAST_DURATION = 3000;
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
-  const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const showToast = (
     message,
@@ -48,16 +55,15 @@ export const ToastProvider = ({ children }) => {
         toast.id === id ? { ...toast, visible: false } : toast
       )
     );
-
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
     }, 300);
   };
 
-  const showSuccess = (message, backgroundColor = null, textColor = null) =>
-    showToast(message, "success", backgroundColor, textColor);
-  const showError = (message, backgroundColor = null, textColor = null) =>
-    showToast(message, "error", backgroundColor, textColor);
+  const showSuccess = (msg, bg = null, text = null) =>
+    showToast(msg, "success", bg, text);
+  const showError = (msg, bg = null, text = null) =>
+    showToast(msg, "error", bg, text);
 
   useEffect(() => {
     if (toasts.length === 0) return;
@@ -65,15 +71,12 @@ export const ToastProvider = ({ children }) => {
     const interval = setInterval(() => {
       setToasts((prev) =>
         prev.map((toast) => {
-          if (toast.paused || !toast.visible) return toast;
+          if (!toast.visible || toast.paused) return toast;
 
           const elapsed = Date.now() - toast.startTime;
           const remaining = TOAST_DURATION - elapsed;
 
-          if (remaining <= 0) {
-            return { ...toast, visible: false };
-          }
-
+          if (remaining <= 0) return { ...toast, visible: false };
           return { ...toast, remaining };
         })
       );
@@ -110,40 +113,44 @@ export const ToastProvider = ({ children }) => {
     setToasts((prev) =>
       prev.map((toast) =>
         toast.id === id
-          ? { ...toast, paused: false, startTime: Date.now() - toast.remaining }
+          ? {
+              ...toast,
+              paused: false,
+              startTime: Date.now() - toast.remaining,
+            }
           : toast
       )
     );
   };
 
   const defaultBackground = {
-    success: "linear-gradient(135deg, #4caf50 0%, #388e3c 100%)",
-    error: "linear-gradient(135deg, #f44336 0%, #d32f2f 100%)",
+    success: "linear-gradient(135deg, #4caf50, #2e7d32)",
+    error: "linear-gradient(135deg, #f44336, #c62828)",
   };
 
   const defaultBoxShadow = {
-    success: "0 0 12px 2px rgba(76,175,80,0.6), 0 6px 14px rgba(0, 0, 0, 0.14)",
-    error: "0 6px 14px rgba(0, 0, 0, 0.14), 0 1px 6px rgba(0, 0, 0, 0.12)",
+    success: "0 4px 12px rgba(76, 175, 80, 0.4)",
+    error: "0 4px 12px rgba(244, 67, 54, 0.4)",
   };
 
   return (
     <ToastContext.Provider value={{ showSuccess, showError }}>
       {children}
 
+      {/* Toast Container */}
       <Box
         aria-live="assertive"
         sx={{
           position: "fixed",
           top: 20,
+          left: 20,
           right: 20,
-          zIndex: 9999,
+          zIndex: 1400,
           display: "flex",
           flexDirection: "column",
           gap: 2,
           pointerEvents: "none",
-          alignItems: "flex-end",
-          width: isSmallScreen ? "calc(100% - 40px)" : "auto",
-          left: isSmallScreen ? 20 : "auto",
+          alignItems: isSmallScreen ? "center" : "flex-end",
         }}
       >
         {toasts.map(
@@ -164,80 +171,77 @@ export const ToastProvider = ({ children }) => {
               onMouseLeave={() => resumeToast(id)}
               sx={{
                 pointerEvents: "auto",
-                px: 2.5,
-                py: 2,
+                px: 3,
+                py: 2.5,
                 borderRadius: 2,
-                background:
-                  backgroundColor || defaultBackground[type] || "#333",
+                background: backgroundColor || defaultBackground[type],
                 color: textColor || "#fff",
                 boxShadow: backgroundColor
-                  ? "0 6px 14px rgba(0, 0, 0, 0.14), 0 1px 6px rgba(0, 0, 0, 0.12)"
-                  : defaultBoxShadow[type] || "0 6px 14px rgba(0,0,0,0.2)",
-                fontWeight: 600,
+                  ? "0 4px 12px rgba(0,0,0,0.2)"
+                  : defaultBoxShadow[type],
+                fontWeight: 500,
                 fontSize: 14,
                 userSelect: "none",
                 cursor: "default",
-
                 opacity: visible ? 1 : 0,
                 transform: visible
-                  ? "translateX(0) scale(1)"
-                  : "translateX(100%) scale(0.95)",
-                transition: "opacity 0.3s ease, transform 0.3s ease",
+                  ? "translateX(0)"
+                  : "translateX(120%) scale(0.95)",
+                transition: "opacity 0.3s, transform 0.3s",
                 position: "relative",
-                overflow: "hidden",
-
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 2,
-
-                textShadow: "0 0 3px rgba(0,0,0,0.4)",
-                willChange: "transform",
-
+                flexDirection: "column",
                 width: "100%",
-                maxWidth: 280,
+                maxWidth: 320,
                 boxSizing: "border-box",
-                wordWrap: "break-word",
-                whiteSpace: "normal",
-                flexWrap: "wrap",
               }}
             >
-              <Box sx={{ flex: 1, mr: 1 }}>{message}</Box>
-
-              <button
-                onClick={() => removeToast(id)}
-                aria-label="Close notification"
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  color: "rgba(255,255,255,0.85)",
-                  fontSize: 18,
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  lineHeight: 1,
-                  padding: 0,
-                  transition: "color 0.2s ease",
+              {/* Header with message and close icon */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  gap: 1,
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "rgba(255,255,255,0.85)")
-                }
               >
-                ×
-              </button>
+                <Typography
+                  sx={{
+                    flex: 1,
+                    lineHeight: 1.5,
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {message}
+                </Typography>
 
+                <IconButton
+                  size="small"
+                  onClick={() => removeToast(id)}
+                  sx={{
+                    color: "rgba(255,255,255,0.85)",
+                    "&:hover": { color: "#fff" },
+                    mt: "-4px",
+                  }}
+                >
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Box>
+
+              {/* Progress Bar */}
               <Box
                 sx={{
                   position: "absolute",
                   bottom: 0,
                   left: 0,
-                  height: 5,
-                  backgroundColor: "rgba(255,255,255,0.8)",
+                  height: 4,
+                  backgroundColor: "rgba(255,255,255,0.7)",
                   width: `${(remaining / TOAST_DURATION) * 100}%`,
                   transition: paused ? "none" : "width 50ms linear",
-                  borderBottomLeftRadius: 10,
-                  borderBottomRightRadius: 10,
-                  boxShadow: "inset 0 1px 3px rgba(255,255,255,0.6)",
+                  borderBottomLeftRadius: 8,
+                  borderBottomRightRadius: 8,
+                  boxShadow: "inset 0 1px 2px rgba(255,255,255,0.4)",
                 }}
               />
             </Box>
