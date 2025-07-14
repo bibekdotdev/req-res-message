@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import { Box, useMediaQuery } from "@mui/material";
 
 const ToastContext = createContext();
 
@@ -6,6 +7,7 @@ const TOAST_DURATION = 3000; // Toast display time in ms
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const showToast = (
     message,
@@ -128,18 +130,20 @@ export const ToastProvider = ({ children }) => {
     <ToastContext.Provider value={{ showSuccess, showError }}>
       {children}
 
-      <div
+      <Box
         aria-live="assertive"
-        style={{
+        sx={{
           position: "fixed",
           top: 20,
           right: 20,
           zIndex: 9999,
           display: "flex",
           flexDirection: "column",
-          gap: 12,
+          gap: 2,
           pointerEvents: "none",
           alignItems: "flex-end",
+          width: isSmallScreen ? "calc(100% - 40px)" : "auto",
+          left: isSmallScreen ? 20 : "auto",
         }}
       >
         {toasts.map(
@@ -153,15 +157,16 @@ export const ToastProvider = ({ children }) => {
             remaining,
             paused,
           }) => (
-            <div
+            <Box
               key={id}
               role="alert"
               onMouseEnter={() => pauseToast(id)}
               onMouseLeave={() => resumeToast(id)}
-              style={{
+              sx={{
                 pointerEvents: "auto",
-                padding: "16px 20px",
-                borderRadius: 10,
+                px: 2.5,
+                py: 2,
+                borderRadius: 2,
                 background:
                   backgroundColor || defaultBackground[type] || "#333",
                 color: textColor || "#fff",
@@ -177,15 +182,14 @@ export const ToastProvider = ({ children }) => {
                 transform: visible
                   ? "translateX(0) scale(1)"
                   : "translateX(100%) scale(0.95)",
-                transition:
-                  "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                transition: "opacity 0.3s ease, transform 0.3s ease",
                 position: "relative",
                 overflow: "hidden",
 
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                gap: 12,
+                gap: 2,
 
                 textShadow: "0 0 3px rgba(0,0,0,0.4)",
                 willChange: "transform",
@@ -198,7 +202,7 @@ export const ToastProvider = ({ children }) => {
                 flexWrap: "wrap",
               }}
             >
-              <span style={{ flex: 1, marginRight: 8 }}>{message}</span>
+              <Box sx={{ flex: 1, mr: 1 }}>{message}</Box>
 
               <button
                 onClick={() => removeToast(id)}
@@ -222,8 +226,8 @@ export const ToastProvider = ({ children }) => {
                 ×
               </button>
 
-              <div
-                style={{
+              <Box
+                sx={{
                   position: "absolute",
                   bottom: 0,
                   left: 0,
@@ -236,10 +240,10 @@ export const ToastProvider = ({ children }) => {
                   boxShadow: "inset 0 1px 3px rgba(255,255,255,0.6)",
                 }}
               />
-            </div>
+            </Box>
           )
         )}
-      </div>
+      </Box>
     </ToastContext.Provider>
   );
 };
