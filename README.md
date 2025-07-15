@@ -1,15 +1,3 @@
-- ✨ Description
-- 📦 Installation
-- ⚙️ Usage with and without custom color/background
-- 📋 API
-- ✅ Examples
-- 🏷️ Badges (optional)
-
----
-
-### ✅ `README.md` for `req-res-message`
-
-````md
 # req-res-message
 
 A lightweight, easy-to-use React toast message utility to display **success** and **error** messages. It supports default styling, and you can also provide **custom color** and **background color** for more control.
@@ -25,7 +13,14 @@ A lightweight, easy-to-use React toast message utility to display **success** an
 ```bash
 npm install req-res-message
 ```
-````
+
+### Required peer dependency (for close icon support):
+
+```bash
+npm install @mui/icons-material
+```
+
+> This package uses Material UI's `CloseIcon` for dismissing toasts. You must install `@mui/icons-material` if it's not already in your project.
 
 ---
 
@@ -112,7 +107,7 @@ showError("Custom error", "#fff", "#e63946");
 
 ## 🙌 Credits
 
-Created by [Bibek Jana](https://github.com/bibekdotdev)
+Created by [Bibek Jana](https://github.com/bibekdotdev)  
 Inspired by simplicity and performance.
 
 ---
@@ -126,10 +121,3 @@ Inspired by simplicity and performance.
 ## 📃 License
 
 This project is licensed under the MIT License.
-
-```
-
-
-
-
-```
